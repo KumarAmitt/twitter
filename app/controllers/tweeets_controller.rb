@@ -1,5 +1,6 @@
 class TweeetsController < ApplicationController
-  before_action :set_tweeet, only: %i[show edit update destroy]
+  before_action :set_tweeet, only: [:show, :edit, :update, :destroy]
+  before_action :authenticate_user!, except: [:index, :show]
 
   def index
     @tweeets = Tweeet.all.order('created_at DESC')
@@ -9,13 +10,13 @@ class TweeetsController < ApplicationController
   def show; end
 
   def new
-    @tweeet = Tweeet.new
+    @tweeet = current_user.tweeets.build
   end
 
   def edit; end
 
   def create
-    @tweeet = Tweeet.new(tweeet_params)
+    @tweeet = current_user.tweeets.build.(tweeet_params)
 
     respond_to do |format|
       if @tweeet.save
